@@ -22,7 +22,7 @@ public class QuestionModuleStartup : IModuleStartup
 
     public static async Task InitDatabase(IConfiguration configuration)
     {
-        MongoClientSettings conn = GetQuestionConnectionString(configuration);
+        var conn = MongoClientSettings.FromConnectionString(configuration.GetConnectionString("Question"));
 
         using var loggerFactory = LoggerFactory.Create(b =>
         {
@@ -41,10 +41,5 @@ public class QuestionModuleStartup : IModuleStartup
     public static async Task MigrateDatabase(IServiceProvider serviceProvider)
     {
         await SampleCoreData.Seed();
-    }
-
-    private static MongoClientSettings GetQuestionConnectionString(IConfiguration configuration)
-    {
-        return MongoClientSettings.FromConnectionString(configuration.GetConnectionString("Question"));
     }
 }

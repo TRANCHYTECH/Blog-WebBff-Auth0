@@ -2,6 +2,7 @@
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
+using Tranchy.Common.HotChocolate;
 using Tranchy.PaymentModule.Data;
 
 namespace Tranchy.PaymentModule.Queries;
@@ -15,7 +16,7 @@ public static class DepositQueries
     [UsePaging(MaxPageSize = 100)]
     [UseSorting]
     [UseFiltering]
-    [Tag("web")]
+    [Web]
     [Authorize(Roles = ["admin"])]
     public static IQueryable<Deposit> GetDeposits([Service(ServiceKind.Synchronized)] PaymentDbContext dbContext)
         => dbContext.Deposits.AsNoTracking().AsQueryable();

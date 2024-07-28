@@ -16,8 +16,7 @@ namespace Tranchy.QuestionModule.Mutations;
 [MutationType]
 public class CreateQuestionMutation
 {
-    // [Mobile]
-    [Tag("mobile")]
+    [Mobile]
     [Error<NotFoundCategoryException>]
     public async Task<Question> CreateQuestion(CreateQuestionInput input,
         ClaimsPrincipal principal,
