@@ -1,0 +1,5 @@
+<p>Question categories:</p>
+<p *ngFor="let c of categories | async">
+    {{c.key}}
+</p>
+<router-outlet></router-outlet>

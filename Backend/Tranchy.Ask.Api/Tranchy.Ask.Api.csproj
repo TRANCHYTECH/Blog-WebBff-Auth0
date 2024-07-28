@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<ItemGroup>
+		<PackageReference Include="HotChocolate.AspNetCore" />
+		<PackageReference Include="HotChocolate.AspNetCore.Authorization" />
+		<PackageReference Include="HotChocolate.AspNetCore.CommandLine" />
+		<PackageReference Include="HotChocolate.Subscriptions.Redis" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Tranchy.QuestionModule\Tranchy.QuestionModule.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="Meziantou.Analyzer">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Update="Roslynator.Analyzers">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Update="Roslynator.Formatting.Analyzers">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+
+	<Target Name="Schema" AfterTargets="PostBuildEvent">
+		<ItemGroup>
+			<FusionFiles Include="*.fsp" />
+		</ItemGroup>
+		<Delete Files="@(FusionFiles)" />
+		<Exec WorkingDirectory="$(MSBuildProjectDir)" ConsoleToMSBuild="true" ContinueOnError="ErrorAndContinue" Command="dotnet run -c $(Configuration) --no-restore --no-build --ApplyMigrationsOnStartup=false -- schema export --output ./schema.graphql &amp;&amp; dotnet fusion subgraph pack -w .">
+			<Output TaskParameter="ExitCode" PropertyName="SchemaExitCode" />
+			<Output TaskParameter="ConsoleOutput" PropertyName="SchemaOutput" />
+		</Exec>
+		<Message Text="$(SchemaOutput)" Condition="'$(SchemaExitCode)' == '0'" Importance="low" />
+		<Error Text="$(SchemaOutput)" Condition="'$(SchemaExitCode)' != '0'" />
+	</Target>
+</Project>

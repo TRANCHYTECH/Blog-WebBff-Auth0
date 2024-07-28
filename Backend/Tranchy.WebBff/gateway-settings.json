@@ -1,0 +1,9 @@
+{
+  "fusionTypePrefix": null,
+  "fusionTypeSelf": false,
+  "tagDirective": {
+    "enabled": true,
+    "makePublic": false,
+    "exclude": [ "mobile" ]
+  }
+}

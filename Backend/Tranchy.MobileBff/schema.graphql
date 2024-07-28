@@ -1,0 +1,393 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+interface Error {
+  message: String!
+}
+
+type CreateDepositPayload {
+  deposit: Deposit
+}
+
+type CreateQuestionPayload {
+  errors: [CreateQuestionError!]
+  question: Question
+}
+
+type Deposit {
+  id: Int!
+  questionId: String!
+  status: String!
+}
+
+"A connection to a list of items."
+type DepositsConnection {
+  "A list of edges."
+  edges: [DepositsEdge!]
+  "A flattened list of the nodes."
+  nodes: [Deposit!]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+}
+
+"An edge in a connection."
+type DepositsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Deposit!
+}
+
+type KeyValuePairOfStringAndString {
+  key: String!
+  value: String!
+}
+
+type Mutation {
+  createDeposit(input: CreateDepositInput!): CreateDepositPayload!
+  createQuestion(input: CreateQuestionInput!): CreateQuestionPayload!
+}
+
+type NotFoundCategoryError implements Error {
+  categoryKeys: [String!]!
+  message: String!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+}
+
+type Query {
+  deposit(questionId: String!): Deposit
+  questionCategories("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [QuestionCategorySortInput!] where: QuestionCategoryFilterInput): QuestionCategoriesConnection
+  questions(order: [QuestionSortInput!] where: QuestionFilterInput): [Question!]!
+}
+
+type Question {
+  categoryKeys: [String!]!
+  comment: String!
+  communityShareAgreement: Boolean
+  createdBy: String!
+  createdOn: DateTime!
+  hasDefaultID: Boolean!
+  id: String!
+  modifiedOn: DateTime!
+  permissions: QuestionPermissions
+  priorityKey: String
+  questionCategories: [QuestionCategory!]!
+  status: QuestionStatus!
+  supportLevel: SupportLevel!
+  title: String!
+}
+
+"A connection to a list of items."
+type QuestionCategoriesConnection {
+  "A list of edges."
+  edges: [QuestionCategoriesEdge!]
+  "A flattened list of the nodes."
+  nodes: [QuestionCategory!]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+}
+
+"An edge in a connection."
+type QuestionCategoriesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: QuestionCategory!
+}
+
+type QuestionCategory {
+  createdOn: DateTime!
+  id: String!
+  key: String!
+  modifiedOn: DateTime!
+  title: [KeyValuePairOfStringAndString!]!
+}
+
+type QuestionConsultant {
+  attachmentIds: [String!]!
+  conclusion: String
+  createdAt: DateTime!
+  userId: String!
+}
+
+type QuestionPermissions {
+  actions: [QuestionAction!]!
+  directChatTargetUserId: String
+}
+
+type SeedCoreDataPayload {
+  boolean: Boolean
+}
+
+type Subscription {
+  questionCreated: Question!
+}
+
+union CreateQuestionError = NotFoundCategoryError
+
+input BooleanOperationFilterInput {
+  eq: Boolean
+  neq: Boolean
+}
+
+input CreateDepositInput {
+  amount: Float!
+  questionId: String!
+}
+
+input CreateQuestionInput {
+  categoryKeys: [String!]!
+  communityShareAgreement: Boolean
+  priorityKey: String
+  supportLevel: SupportLevel!
+  title: String!
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime]
+  lt: DateTime
+  lte: DateTime
+  neq: DateTime
+  ngt: DateTime
+  ngte: DateTime
+  nin: [DateTime]
+  nlt: DateTime
+  nlte: DateTime
+}
+
+input DepositFilterInput {
+  and: [DepositFilterInput!]
+  id: IntOperationFilterInput
+  or: [DepositFilterInput!]
+  questionId: StringOperationFilterInput
+  status: StringOperationFilterInput
+}
+
+input DepositSortInput {
+  id: SortEnumType
+  questionId: SortEnumType
+  status: SortEnumType
+}
+
+input FloatOperationFilterInput {
+  eq: Float
+  gt: Float
+  gte: Float
+  in: [Float]
+  lt: Float
+  lte: Float
+  neq: Float
+  ngt: Float
+  ngte: Float
+  nin: [Float]
+  nlt: Float
+  nlte: Float
+}
+
+input IntOperationFilterInput {
+  eq: Int
+  gt: Int
+  gte: Int
+  in: [Int]
+  lt: Int
+  lte: Int
+  neq: Int
+  ngt: Int
+  ngte: Int
+  nin: [Int]
+  nlt: Int
+  nlte: Int
+}
+
+input KeyValuePairOfStringAndStringFilterInput {
+  and: [KeyValuePairOfStringAndStringFilterInput!]
+  key: StringOperationFilterInput
+  or: [KeyValuePairOfStringAndStringFilterInput!]
+  value: StringOperationFilterInput
+}
+
+input ListFilterInputTypeOfKeyValuePairOfStringAndStringFilterInput {
+  all: KeyValuePairOfStringAndStringFilterInput
+  any: Boolean
+  none: KeyValuePairOfStringAndStringFilterInput
+  some: KeyValuePairOfStringAndStringFilterInput
+}
+
+input ListQuestionActionOperationFilterInput {
+  all: QuestionActionOperationFilterInput
+  any: Boolean
+  none: QuestionActionOperationFilterInput
+  some: QuestionActionOperationFilterInput
+}
+
+input ListStringOperationFilterInput {
+  all: StringOperationFilterInput
+  any: Boolean
+  none: StringOperationFilterInput
+  some: StringOperationFilterInput
+}
+
+input QuestionActionOperationFilterInput {
+  eq: QuestionAction
+  in: [QuestionAction!]
+  neq: QuestionAction
+  nin: [QuestionAction!]
+}
+
+input QuestionCategoryFilterInput {
+  and: [QuestionCategoryFilterInput!]
+  createdOn: DateTimeOperationFilterInput
+  id: StringOperationFilterInput
+  key: StringOperationFilterInput
+  modifiedOn: DateTimeOperationFilterInput
+  or: [QuestionCategoryFilterInput!]
+  title: ListFilterInputTypeOfKeyValuePairOfStringAndStringFilterInput
+}
+
+input QuestionCategorySortInput {
+  createdOn: SortEnumType
+  id: SortEnumType
+  key: SortEnumType
+  modifiedOn: SortEnumType
+}
+
+input QuestionConsultantFilterInput {
+  and: [QuestionConsultantFilterInput!]
+  attachmentIds: ListStringOperationFilterInput
+  conclusion: StringOperationFilterInput
+  createdAt: DateTimeOperationFilterInput
+  or: [QuestionConsultantFilterInput!]
+  userId: StringOperationFilterInput
+}
+
+input QuestionConsultantSortInput {
+  conclusion: SortEnumType
+  createdAt: SortEnumType
+  userId: SortEnumType
+}
+
+input QuestionFilterInput {
+  and: [QuestionFilterInput!]
+  categoryKeys: ListStringOperationFilterInput
+  comment: StringOperationFilterInput
+  communityShareAgreement: BooleanOperationFilterInput
+  createdBy: StringOperationFilterInput
+  createdOn: DateTimeOperationFilterInput
+  id: StringOperationFilterInput
+  modifiedOn: DateTimeOperationFilterInput
+  or: [QuestionFilterInput!]
+  permissions: QuestionPermissionsFilterInput
+  priorityKey: StringOperationFilterInput
+  status: QuestionStatusOperationFilterInput
+  supportLevel: SupportLevelOperationFilterInput
+  title: StringOperationFilterInput
+}
+
+input QuestionPermissionsFilterInput {
+  actions: ListQuestionActionOperationFilterInput
+  and: [QuestionPermissionsFilterInput!]
+  directChatTargetUserId: StringOperationFilterInput
+  or: [QuestionPermissionsFilterInput!]
+}
+
+input QuestionPermissionsSortInput {
+  directChatTargetUserId: SortEnumType
+}
+
+input QuestionSortInput {
+  comment: SortEnumType
+  communityShareAgreement: SortEnumType
+  createdBy: SortEnumType
+  createdOn: SortEnumType
+  id: SortEnumType
+  modifiedOn: SortEnumType
+  permissions: QuestionPermissionsSortInput
+  priorityKey: SortEnumType
+  status: SortEnumType
+  supportLevel: SortEnumType
+  title: SortEnumType
+}
+
+input QuestionStatusOperationFilterInput {
+  eq: QuestionStatus
+  in: [QuestionStatus!]
+  neq: QuestionStatus
+  nin: [QuestionStatus!]
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  contains: String
+  endsWith: String
+  eq: String
+  in: [String]
+  ncontains: String
+  nendsWith: String
+  neq: String
+  nin: [String]
+  nstartsWith: String
+  or: [StringOperationFilterInput!]
+  startsWith: String
+}
+
+input SupportLevelOperationFilterInput {
+  eq: SupportLevel
+  in: [SupportLevel!]
+  neq: SupportLevel
+  nin: [SupportLevel!]
+}
+
+enum ApplyPolicy {
+  AFTER_RESOLVER
+  BEFORE_RESOLVER
+  VALIDATION
+}
+
+enum QuestionAction {
+  GO_TO_CONVERSATION
+  TAKE_CONSULTATION
+}
+
+enum QuestionStatus {
+  ACCEPTED
+  BEING_REVIEWED
+  CANCELLED
+  CLOSED
+  IN_PROGRESS
+  NEW
+  PAYMENT
+  REJECTED
+  REPORTED
+  RESOLVED
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+enum SupportLevel {
+  AGENCY
+  COMMUNITY
+  EXPERT
+}
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")

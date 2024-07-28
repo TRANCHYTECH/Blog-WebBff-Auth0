@@ -1,0 +1,136 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type CreateDepositPayload {
+  deposit: Deposit
+}
+
+type Deposit {
+  id: Int!
+  questionId: String!
+  amount: Float! @tag(name: "web")
+  status: String!
+}
+
+"A connection to a list of items."
+type DepositsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [DepositsEdge!]
+  "A flattened list of the nodes."
+  nodes: [Deposit!]
+}
+
+"An edge in a connection."
+type DepositsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Deposit!
+}
+
+type Mutation {
+  createDeposit(input: CreateDepositInput!): CreateDepositPayload!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+type Query {
+  deposit(questionId: String!): Deposit
+  deposits("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String order: [DepositSortInput!] where: DepositFilterInput): DepositsConnection @tag(name: "web") @authorize(roles: [ "admin" ])
+}
+
+input CreateDepositInput {
+  questionId: String!
+  amount: Float!
+}
+
+input DepositFilterInput {
+  and: [DepositFilterInput!]
+  or: [DepositFilterInput!]
+  id: IntOperationFilterInput
+  questionId: StringOperationFilterInput
+  amount: FloatOperationFilterInput @tag(name: "web")
+  status: StringOperationFilterInput
+}
+
+input DepositSortInput {
+  id: SortEnumType
+  questionId: SortEnumType
+  amount: SortEnumType @tag(name: "web")
+  status: SortEnumType
+}
+
+input FloatOperationFilterInput {
+  eq: Float
+  neq: Float
+  in: [Float]
+  nin: [Float]
+  gt: Float
+  ngt: Float
+  gte: Float
+  ngte: Float
+  lt: Float
+  nlt: Float
+  lte: Float
+  nlte: Float
+}
+
+input IntOperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int]
+  nin: [Int]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+  VALIDATION
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
+
+"The @tag directive is used to apply arbitrary string\nmetadata to a schema location. Custom tooling can use\nthis metadata during any step of the schema delivery flow,\nincluding composition, static analysis, and documentation.\n\ninterface Book {\n  id: ID! @tag(name: \"your-value\")\n  title: String!\n  author: String!\n}"
+directive @tag(name: String!) repeatable on SCHEMA | SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION

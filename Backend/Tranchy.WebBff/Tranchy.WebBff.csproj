@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web"><PropertyGroup>  <UserSecretsId>23c96c9d-c506-4b5a-8d00-90b8e194d679</UserSecretsId>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="HotChocolate.Fusion" />
+		<PackageReference Include="HotChocolate.AspNetCore.CommandLine" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="HotChocolate.AspNetCore.Authorization" />
+		<PackageReference Include="Microsoft.AspNetCore.HeaderPropagation" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Tranchy.Common\Tranchy.Common.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Update="Meziantou.Analyzer">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Update="Roslynator.Analyzers">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Update="Roslynator.Formatting.Analyzers">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+
+	<Target Name="Schema" AfterTargets="PreBuildEvent">
+		<ItemGroup>
+			<FusionFiles Include="*.fgp" />
+		</ItemGroup>
+		<Delete Files="@(FusionFiles)" />
+		<Exec WorkingDirectory="$(MSBuildProjectDir)" ConsoleToMSBuild="true" ContinueOnError="ErrorAndContinue" Command="dotnet fusion compose -p ./gateway -s ../Tranchy.Ask.Api &amp;&amp; dotnet fusion compose -p ./gateway -s ../Tranchy.Payment.Api">
+			<Output TaskParameter="ExitCode" PropertyName="SchemaExitCode" />
+			<Output TaskParameter="ConsoleOutput" PropertyName="SchemaOutput" />
+		</Exec>
+		<Message Text="$(SchemaOutput)" Condition="'$(SchemaExitCode)' == '0'" Importance="low" />
+		<Error Text="$(SchemaOutput)" Condition="'$(SchemaExitCode)' != '0'" />
+	</Target>
+	<Target Name="ExtractSchema" AfterTargets="PostBuildEvent">
+		<Exec WorkingDirectory="$(MSBuildProjectDir)" ConsoleToMSBuild="true" ContinueOnError="ErrorAndContinue" Command="dotnet run --no-restore --no-build -- schema export --output ./schema.graphql">
+			<Output TaskParameter="ExitCode" PropertyName="SchemaExitCode" />
+			<Output TaskParameter="ConsoleOutput" PropertyName="SchemaOutput" />
+		</Exec>
+		<Message Text="$(SchemaOutput)" Condition="'$(SchemaExitCode)' == '0'" Importance="low" />
+		<Error Text="$(SchemaOutput)" Condition="'$(SchemaExitCode)' != '0'" />
+	</Target>
+</Project>

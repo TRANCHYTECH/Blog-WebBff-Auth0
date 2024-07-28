@@ -1,0 +1,323 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+interface Error {
+  message: String!
+}
+
+type CreateQuestionPayload {
+  question: Question
+  errors: [CreateQuestionError!]
+}
+
+type KeyValuePairOfStringAndString {
+  key: String!
+  value: String!
+}
+
+type Mutation {
+  createQuestion(input: CreateQuestionInput!): CreateQuestionPayload! @tag(name: "mobile")
+  seedCoreData: SeedCoreDataPayload! @tag(name: "web") @authorize(roles: [ "admin" ])
+}
+
+type NotFoundCategoryError implements Error {
+  message: String!
+  categoryKeys: [String!]!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+type Query {
+  questionCategories("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String order: [QuestionCategorySortInput!] where: QuestionCategoryFilterInput): QuestionCategoriesConnection
+  questions(order: [QuestionSortInput!] where: QuestionFilterInput): [Question!]!
+}
+
+type Question {
+  hasDefaultID: Boolean!
+  title: String!
+  supportLevel: SupportLevel!
+  status: QuestionStatus!
+  priorityKey: String
+  categoryKeys: [String!]!
+  communityShareAgreement: Boolean
+  consultant: QuestionConsultant @tag(name: "web")
+  permissions: QuestionPermissions
+  comment: String!
+  createdBy: String!
+  createdOn: DateTime!
+  modifiedOn: DateTime!
+  id: String!
+  questionCategories: [QuestionCategory!]!
+}
+
+"A connection to a list of items."
+type QuestionCategoriesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [QuestionCategoriesEdge!]
+  "A flattened list of the nodes."
+  nodes: [QuestionCategory!]
+}
+
+"An edge in a connection."
+type QuestionCategoriesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: QuestionCategory!
+}
+
+type QuestionCategory {
+  key: String!
+  title: [KeyValuePairOfStringAndString!]!
+  createdOn: DateTime!
+  modifiedOn: DateTime!
+  id: String!
+}
+
+type QuestionConsultant {
+  userId: String!
+  createdAt: DateTime!
+  conclusion: String
+  attachmentIds: [String!]!
+}
+
+type QuestionPermissions {
+  actions: [QuestionAction!]!
+  directChatTargetUserId: String
+}
+
+type SeedCoreDataPayload {
+  boolean: Boolean
+}
+
+type Subscription @tag(name: "web") {
+  questionCreated: Question!
+}
+
+union CreateQuestionError = NotFoundCategoryError
+
+input BooleanOperationFilterInput {
+  eq: Boolean
+  neq: Boolean
+}
+
+input CreateQuestionInput {
+  title: String!
+  supportLevel: SupportLevel!
+  priorityKey: String
+  categoryKeys: [String!]!
+  communityShareAgreement: Boolean
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime]
+  nin: [DateTime]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+input KeyValuePairOfStringAndStringFilterInput {
+  and: [KeyValuePairOfStringAndStringFilterInput!]
+  or: [KeyValuePairOfStringAndStringFilterInput!]
+  key: StringOperationFilterInput
+  value: StringOperationFilterInput
+}
+
+input ListFilterInputTypeOfKeyValuePairOfStringAndStringFilterInput {
+  all: KeyValuePairOfStringAndStringFilterInput
+  none: KeyValuePairOfStringAndStringFilterInput
+  some: KeyValuePairOfStringAndStringFilterInput
+  any: Boolean
+}
+
+input ListQuestionActionOperationFilterInput {
+  all: QuestionActionOperationFilterInput
+  none: QuestionActionOperationFilterInput
+  some: QuestionActionOperationFilterInput
+  any: Boolean
+}
+
+input ListStringOperationFilterInput {
+  all: StringOperationFilterInput
+  none: StringOperationFilterInput
+  some: StringOperationFilterInput
+  any: Boolean
+}
+
+input QuestionActionOperationFilterInput {
+  eq: QuestionAction
+  neq: QuestionAction
+  in: [QuestionAction!]
+  nin: [QuestionAction!]
+}
+
+input QuestionCategoryFilterInput {
+  and: [QuestionCategoryFilterInput!]
+  or: [QuestionCategoryFilterInput!]
+  key: StringOperationFilterInput
+  title: ListFilterInputTypeOfKeyValuePairOfStringAndStringFilterInput
+  createdOn: DateTimeOperationFilterInput
+  modifiedOn: DateTimeOperationFilterInput
+  id: StringOperationFilterInput
+}
+
+input QuestionCategorySortInput {
+  key: SortEnumType
+  createdOn: SortEnumType
+  modifiedOn: SortEnumType
+  id: SortEnumType
+}
+
+input QuestionConsultantFilterInput {
+  and: [QuestionConsultantFilterInput!]
+  or: [QuestionConsultantFilterInput!]
+  userId: StringOperationFilterInput
+  createdAt: DateTimeOperationFilterInput
+  conclusion: StringOperationFilterInput
+  attachmentIds: ListStringOperationFilterInput
+}
+
+input QuestionConsultantSortInput {
+  userId: SortEnumType
+  createdAt: SortEnumType
+  conclusion: SortEnumType
+}
+
+input QuestionFilterInput {
+  and: [QuestionFilterInput!]
+  or: [QuestionFilterInput!]
+  title: StringOperationFilterInput
+  supportLevel: SupportLevelOperationFilterInput
+  status: QuestionStatusOperationFilterInput
+  priorityKey: StringOperationFilterInput
+  categoryKeys: ListStringOperationFilterInput
+  communityShareAgreement: BooleanOperationFilterInput
+  consultant: QuestionConsultantFilterInput @tag(name: "web")
+  permissions: QuestionPermissionsFilterInput
+  comment: StringOperationFilterInput
+  createdBy: StringOperationFilterInput
+  createdOn: DateTimeOperationFilterInput
+  modifiedOn: DateTimeOperationFilterInput
+  id: StringOperationFilterInput
+}
+
+input QuestionPermissionsFilterInput {
+  and: [QuestionPermissionsFilterInput!]
+  or: [QuestionPermissionsFilterInput!]
+  actions: ListQuestionActionOperationFilterInput
+  directChatTargetUserId: StringOperationFilterInput
+}
+
+input QuestionPermissionsSortInput {
+  directChatTargetUserId: SortEnumType
+}
+
+input QuestionSortInput {
+  title: SortEnumType
+  supportLevel: SortEnumType
+  status: SortEnumType
+  priorityKey: SortEnumType
+  communityShareAgreement: SortEnumType
+  consultant: QuestionConsultantSortInput @tag(name: "web")
+  permissions: QuestionPermissionsSortInput
+  comment: SortEnumType
+  createdBy: SortEnumType
+  createdOn: SortEnumType
+  modifiedOn: SortEnumType
+  id: SortEnumType
+}
+
+input QuestionStatusOperationFilterInput {
+  eq: QuestionStatus
+  neq: QuestionStatus
+  in: [QuestionStatus!]
+  nin: [QuestionStatus!]
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input SupportLevelOperationFilterInput {
+  eq: SupportLevel
+  neq: SupportLevel
+  in: [SupportLevel!]
+  nin: [SupportLevel!]
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+  VALIDATION
+}
+
+enum QuestionAction {
+  TAKE_CONSULTATION
+  GO_TO_CONVERSATION
+}
+
+enum QuestionStatus {
+  NEW
+  BEING_REVIEWED
+  ACCEPTED
+  CANCELLED
+  PAYMENT
+  IN_PROGRESS
+  REJECTED
+  RESOLVED
+  CLOSED
+  REPORTED
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+enum SupportLevel {
+  COMMUNITY
+  EXPERT
+  AGENCY
+}
+
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
+
+"The @tag directive is used to apply arbitrary string\nmetadata to a schema location. Custom tooling can use\nthis metadata during any step of the schema delivery flow,\nincluding composition, static analysis, and documentation.\n\ninterface Book {\n  id: ID! @tag(name: \"your-value\")\n  title: String!\n  author: String!\n}"
+directive @tag(name: String!) repeatable on SCHEMA | SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")

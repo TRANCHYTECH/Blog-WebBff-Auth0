@@ -1,0 +1,6 @@
+{
+  "subgraph": "AskApi",
+  "http": {
+    "baseAddress": "https://localhost:7040/api/graphql/"
+  }
+}
