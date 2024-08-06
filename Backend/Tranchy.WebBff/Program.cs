@@ -1,6 +1,8 @@
+using Duende.Bff.EntityFramework;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Tranchy.Common;
 using Tranchy.WebBff;
 
@@ -102,13 +104,32 @@ if (builder.Environment.IsDevelopment())
             .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 }
 
+builder.Services.AddPooledDbContextFactory<SessionDbContext>((serviceProvider, options) =>
+    {
+        string? connectionString = serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString("UserSession");
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(3);
+            sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory");
+            sqlOptions.MigrationsAssembly(typeof(Program).Assembly.FullName);
+        });
+    })
+    .AddScoped(provider => provider.GetRequiredService<IDbContextFactory<SessionDbContext>>().CreateDbContext());
+
 builder.Services.AddBff(options =>
 {
     options.BackchannelLogoutAllUserSessions = true;
     options.EnableSessionCleanup = true;
-});
+}).AddEntityFrameworkServerSideSessions(options => options.UseSqlServer(configuration.GetConnectionString("UserSession")));
 
 var app = builder.Build();
+
+if (app.Configuration.GetValue<bool>("ApplyMigrationsOnStartup"))
+{
+    var factory = app.Services.GetRequiredService<IDbContextFactory<SessionDbContext>>();
+    await using var context = await factory.CreateDbContextAsync();
+    await context.Database.MigrateAsync().ConfigureAwait(false);
+}
 
 app.UseHeaderPropagation();
 app.UseForwardedHeaders();

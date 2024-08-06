@@ -2,11 +2,21 @@
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Duende.BFF" />
+		<PackageReference Include="Duende.BFF.EntityFramework" />
 		<PackageReference Include="HotChocolate.Fusion" />
 		<PackageReference Include="HotChocolate.AspNetCore.CommandLine" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 		<PackageReference Include="HotChocolate.AspNetCore.Authorization" />
 		<PackageReference Include="Microsoft.AspNetCore.HeaderPropagation" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
 	</ItemGroup>
 	<ItemGroup>
@@ -25,6 +35,9 @@
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Data\" />
 	</ItemGroup>
 
 	<Target Name="Schema" AfterTargets="PreBuildEvent">

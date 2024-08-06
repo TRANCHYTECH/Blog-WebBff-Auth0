@@ -4,6 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Duende.BFF.EntityFramework" Version="2.2.0" />
     <PackageVersion Include="HotChocolate.Data" Version="13.9.7" />
     <PackageVersion Include="HotChocolate.Subscriptions.Redis" Version="13.9.7" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
@@ -37,7 +38,7 @@
     <PackageVersion Include="HotChocolate.Data.MongoDb" Version="13.9.7" />
     <PackageVersion Include="HotChocolate.Types" Version="13.9.7" />
     <PackageVersion Include="HotChocolate.Fusion" Version="13.9.7" />
-    <PackageVersion Include="Duende.BFF" Version="2.2.0"/>
+    <PackageVersion Include="Duende.BFF" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Meziantou.Analyzer" Version="2.0.160" />
