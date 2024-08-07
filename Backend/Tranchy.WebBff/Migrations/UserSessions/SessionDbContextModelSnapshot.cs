@@ -17,6 +17,7 @@ namespace Tranchy.WebBff.Migrations.UserSessions
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("session")
                 .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -76,7 +77,7 @@ namespace Tranchy.WebBff.Migrations.UserSessions
                         .IsUnique()
                         .HasFilter("[ApplicationName] IS NOT NULL AND [SessionId] IS NOT NULL");
 
-                    b.ToTable("UserSessions", (string)null);
+                    b.ToTable("UserSessions", "session");
                 });
 #pragma warning restore 612, 618
         }

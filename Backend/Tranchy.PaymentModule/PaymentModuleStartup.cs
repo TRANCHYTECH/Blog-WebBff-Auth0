@@ -40,4 +40,9 @@ public class PaymentModuleStartup : IModuleStartup
         await using var context = await factory.CreateDbContextAsync();
         await context.Database.MigrateAsync().ConfigureAwait(false);
     }
+
+    public static Task InitDatabase(IConfiguration configuration)
+    {
+        return Task.CompletedTask;
+    }
 }

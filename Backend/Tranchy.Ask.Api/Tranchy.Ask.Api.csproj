@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Tranchy.QuestionModule\Tranchy.QuestionModule.csproj" />
+		<ProjectReference Include="..\Tranchy.UserModule\Tranchy.UserModule.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

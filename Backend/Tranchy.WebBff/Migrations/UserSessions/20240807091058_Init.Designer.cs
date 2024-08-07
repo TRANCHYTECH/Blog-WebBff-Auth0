@@ -12,14 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Tranchy.WebBff.Migrations.UserSessions
 {
     [DbContext(typeof(SessionDbContext))]
-    [Migration("20240806010738_Initial")]
-    partial class Initial
+    [Migration("20240807091058_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("session")
                 .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -79,7 +80,7 @@ namespace Tranchy.WebBff.Migrations.UserSessions
                         .IsUnique()
                         .HasFilter("[ApplicationName] IS NOT NULL AND [SessionId] IS NOT NULL");
 
-                    b.ToTable("UserSessions", (string)null);
+                    b.ToTable("UserSessions", "session");
                 });
 #pragma warning restore 612, 618
         }

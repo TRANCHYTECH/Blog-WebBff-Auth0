@@ -6,13 +6,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tranchy.WebBff.Migrations.UserSessions
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "session");
+
             migrationBuilder.CreateTable(
                 name: "UserSessions",
+                schema: "session",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -33,6 +37,7 @@ namespace Tranchy.WebBff.Migrations.UserSessions
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_ApplicationName_Key",
+                schema: "session",
                 table: "UserSessions",
                 columns: new[] { "ApplicationName", "Key" },
                 unique: true,
@@ -40,6 +45,7 @@ namespace Tranchy.WebBff.Migrations.UserSessions
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_ApplicationName_SessionId",
+                schema: "session",
                 table: "UserSessions",
                 columns: new[] { "ApplicationName", "SessionId" },
                 unique: true,
@@ -47,6 +53,7 @@ namespace Tranchy.WebBff.Migrations.UserSessions
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_ApplicationName_SubjectId_SessionId",
+                schema: "session",
                 table: "UserSessions",
                 columns: new[] { "ApplicationName", "SubjectId", "SessionId" },
                 unique: true,
@@ -54,6 +61,7 @@ namespace Tranchy.WebBff.Migrations.UserSessions
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_Expires",
+                schema: "session",
                 table: "UserSessions",
                 column: "Expires");
         }
@@ -62,7 +70,8 @@ namespace Tranchy.WebBff.Migrations.UserSessions
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserSessions");
+                name: "UserSessions",
+                schema: "session");
         }
     }
 }

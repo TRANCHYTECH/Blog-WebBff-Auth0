@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Tranchy.Common;
+using Tranchy.Common.Constants;
 using Tranchy.WebBff;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,7 @@ builder.Configuration.GetRequiredSection("Authentication:Schemes:Auth0").Bind(op
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultScheme = "MultiAuthSchemes";
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     options.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
 }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -70,10 +71,25 @@ builder.Services.AddAuthentication(options =>
             return Task.CompletedTask;
         },
     };
-});
+})
+.AddJwtBearer()
+.AddPolicyScheme("MultiAuthSchemes", "Multi Auth Schemes", options =>
+    {
+        options.ForwardDefaultSelector = context =>
+        {
+            // For advanced usage, we could read token and check audience, then redirect to corresponding schema
+            string? authorization = context.Request.Headers.Authorization;
+            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer ", StringComparison.Ordinal))
+            {
+                return "Bearer";
+            }
+
+            return CookieAuthenticationDefaults.AuthenticationScheme;
+        };
+    });
 
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Auth0Policy", policy =>
+    .AddPolicy(AuthPolicyNames.CreateUserPolicy, policy =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("scope", "write:users");
@@ -145,5 +161,8 @@ if (configuration.GetValue<bool>("EnableBananaCakePop"))
     app.MapBananaCakePop("/api/graphql/ui").AllowAnonymous();
 }
 app.MapGraphQLHttp("/api/graphql").RequireAuthorization();
+
+// todo: replace with env setting value
+app.MapForwarder("/api/integration/oauth0/users", "https://localhost:7040");
 
 await app.RunWithCustomGraphQlCommandsAsync(args);

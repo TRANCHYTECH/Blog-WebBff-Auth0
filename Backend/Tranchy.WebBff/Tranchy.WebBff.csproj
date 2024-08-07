@@ -38,6 +38,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Data\" />
+	  <Folder Include="Migrations\" />
 	</ItemGroup>
 
 	<Target Name="Schema" AfterTargets="PreBuildEvent">

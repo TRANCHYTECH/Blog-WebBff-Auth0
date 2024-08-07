@@ -475,6 +475,11 @@
         "resolved": "5.0.0",
         "contentHash": "VyPlqzH2wavqquTcYpkIIAQ6WdenuKoFN0BdYBbCWsclXacSOHNQn66Gt4z5NBqEYW0FAPm5rlvki9ZiCij5xQ=="
       },
+      "Microsoft.OpenApi": {
+        "type": "Transitive",
+        "resolved": "1.4.3",
+        "contentHash": "rURwggB+QZYcSVbDr7HSdhw/FELvMlriW10OeOzjPT7pstefMo7IThhtNtDudxbXhW+lj0NfX72Ka5EDsG8x6w=="
+      },
       "Microsoft.Win32.Registry": {
         "type": "Transitive",
         "resolved": "5.0.0",
@@ -680,6 +685,14 @@
           "Tranchy.Common": "[1.0.0, )"
         }
       },
+      "tranchy.usermodule": {
+        "type": "Project",
+        "dependencies": {
+          "Jdenticon-net": "(, )",
+          "Microsoft.AspNetCore.OpenApi": "[8.0.1, )",
+          "Tranchy.Common": "[1.0.0, )"
+        }
+      },
       "HotChocolate.Authorization": {
         "type": "CentralTransitive",
         "requested": "[13.9.7, )",
@@ -751,6 +764,15 @@
         "dependencies": {
           "Microsoft.AspNetCore.Http.Features": "2.2.0",
           "System.Text.Encodings.Web": "4.5.0"
+        }
+      },
+      "Microsoft.AspNetCore.OpenApi": {
+        "type": "CentralTransitive",
+        "requested": "[8.0.1, )",
+        "resolved": "8.0.1",
+        "contentHash": "JF0U31SByntKEhZNC8ch3CD87BLZb5AzSujOBppLdvnjYu3W2XZvlsol5hUJfxiaHOp720cUiL6wzG8Bv0fI2Q==",
+        "dependencies": {
+          "Microsoft.OpenApi": "1.4.3"
         }
       },
       "Microsoft.Extensions.Configuration.Abstractions": {

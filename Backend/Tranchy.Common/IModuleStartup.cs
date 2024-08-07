@@ -6,5 +6,6 @@ namespace Tranchy.Common;
 public interface IModuleStartup
 {
     static abstract void ConfigureServices(IServiceCollection services, IConfiguration configuration);
+    static abstract Task InitDatabase(IConfiguration configuration);
     static abstract Task MigrateDatabase(IServiceProvider serviceProvider);
 }

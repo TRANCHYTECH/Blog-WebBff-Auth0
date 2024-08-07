@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using StackExchange.Redis;
 using Tranchy.Common;
 using Tranchy.QuestionModule;
+using Tranchy.UserModule;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -24,6 +25,7 @@ builder.Services
     .AddAuthorization();
 
 QuestionModuleStartup.ConfigureServices(builder.Services, configuration);
+UserModuleStartup.ConfigureServices(builder.Services, configuration);
 
 if (builder.Environment.IsDevelopment())
 {
@@ -46,15 +48,20 @@ if (configuration.GetValue<bool>("EnableBananaCakePop"))
 }
 app.MapGraphQLHttp("/api/graphql").RequireAuthorization();
 
+var integrationGroupBuilder = app.MapGroup("/api/integration");
+integrationGroupBuilder.MapIntegrationEndpoints<UserModuleStartup>().RequireAuthorization();
+
 if (!args.IsGraphQlCommand())
 {
     await QuestionModuleStartup.InitDatabase(configuration);
+    await UserModuleStartup.InitDatabase(configuration);
 }
 
 if (app.Configuration.GetValue<bool>("ApplyMigrationsOnStartup"))
 {
     await using var scope = app.Services.CreateAsyncScope();
     await QuestionModuleStartup.MigrateDatabase(scope.ServiceProvider);
+    await UserModuleStartup.MigrateDatabase(scope.ServiceProvider);
 }
 
 await app.RunWithCustomGraphQlCommandsAsync(args);
