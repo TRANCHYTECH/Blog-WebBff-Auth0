@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.IdentityModel.Tokens.Jwt;
 using Tranchy.Common;
 using Tranchy.Common.Constants;
 using Tranchy.WebBff;
@@ -17,7 +18,7 @@ builder.Configuration.GetRequiredSection("Authentication:Schemes:Auth0").Bind(op
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = "MultiAuthSchemes";
+    options.DefaultScheme = AuthenticationSchemaNames.MultiAuthSchemes;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     options.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
 }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -72,16 +73,24 @@ builder.Services.AddAuthentication(options =>
         },
     };
 })
-.AddJwtBearer()
-.AddPolicyScheme("MultiAuthSchemes", "Multi Auth Schemes", options =>
+.AddJwtBearer(AuthenticationSchemaNames.UserSynchronization)
+.AddPolicyScheme(AuthenticationSchemaNames.MultiAuthSchemes, "Multi Auth Schemes", options =>
     {
         options.ForwardDefaultSelector = context =>
         {
             // For advanced usage, we could read token and check audience, then redirect to corresponding schema
             string? authorization = context.Request.Headers.Authorization;
-            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer ", StringComparison.Ordinal))
+            const string bearerPrefx = "Bearer ";
+            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith(bearerPrefx, StringComparison.Ordinal))
             {
-                return "Bearer";
+                string token = authorization[bearerPrefx.Length..];
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+                if (jsonToken?.Audiences.Contains("user-synchronization", StringComparer.Ordinal) == true)
+                {
+                    return AuthenticationSchemaNames.UserSynchronization;
+                }
             }
 
             return CookieAuthenticationDefaults.AuthenticationScheme;
